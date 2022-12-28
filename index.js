@@ -28,7 +28,14 @@ const client = mqtt.connect(BROKER_URL, {
 })
 
 // Set the topic
-const topics = ['sijaka/development/connection_AL207110']
+const topics = [
+    'sijaka/train/+/origin',
+    'sijaka/train/+/destination',
+    'sijaka/train/+/location',
+
+    'sijaka/station/+/schedule/+/depart_time',
+    'sijaka/station/+/schedule/+/arrive_time',
+]
 
 post = function(path, topic, data) {
     const payload = {
@@ -38,7 +45,8 @@ post = function(path, topic, data) {
 
     const header = {
         headers: {
-            Accept: 'application/json'
+            Accept: 'application/json',
+            'X-SIJAKA-APIKEY': process.env.APP_API_KEY
         }
     } 
 
@@ -67,5 +75,5 @@ client.on('message', (topic, payload) => {
     console.log(`[MQTT] Received message at ${topic} that says ${payload}`)
     console.log(`[MQTT] Requesting HTTP request to listener...`)
   
-    post('listener', topic, payload.toString())
+    post(topic, topic, payload.toString())
 })
